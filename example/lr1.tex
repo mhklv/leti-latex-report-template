@@ -1,0 +1,1095 @@
+\documentclass[a4paper]{article}
+\usepackage{xltxtra}
+\usepackage{graphicx}
+\usepackage{fancybox}
+\usepackage{fontawesome}
+\usepackage{hyperref}
+\usepackage{titletoc}
+\usepackage{calc}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+\usepackage{zref-savepos}
+\usepackage{hypbmsec}
+\usepackage{needspace}
+\usepackage{xifthen}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{flafter}
+\usepackage{placeins}
+\usepackage{minted}
+% \usepackage{lscape} % provides landscape environment
+\usepackage{pdflscape} % provides landscape environment with rotation in a pdf file
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{xtab}
+\usepackage{accsupp}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+
+% \usepackage{newtxmath}
+% \usepackage{fourier}
+% \usepackage{palatino}
+
+
+
+
+% Misc
+\newcounter{fillparbox}
+\newcommand{\fillparbox}[2][c]{%
+  \stepcounter{fillparbox}% New \fillparbox
+  \mbox{}\zsaveposx{\thefillparbox-L}\hfill\zsaveposx{\thefillparbox-R}% Mark Left and Right end-points remaining on line.
+  \makebox[0pt][r]{\parbox[#1]{\dimexpr\zposx{\thefillparbox-R}sp-\zposx{\thefillparbox-L}sp}{\strut #2\strut}}%
+}
+
+
+% Шрифты и язык
+\usepackage[base]{babel}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\setkeys{russian}{babelshorthands=true}
+\defaultfontfeatures{Ligatures=TeX,Mapping=tex-text}
+
+\setmainfont[Ligatures=Rare]{Times New Roman}
+% \setmainfont{P052}
+\setsansfont{Arial}
+\setmonofont{DejaVu Sans Mono}
+% \setmonofont{Latin Modern Mono Caps}
+% \setmonofont{Mathematica7Mono}
+
+
+% Automatic hyphenation rules switching
+% \usepackage{microtype}
+\usepackage{ucharclasses}
+\setTransitionsForLatin{\begingroup\hyphenrules{english}}{\endgroup}
+
+
+% Основной текст, заголовки
+\newlength{\mainTextFontSize}
+\newlength{\mainTextLeading}
+\setlength{\mainTextFontSize}{14pt}
+\setlength{\mainTextLeading}{\mainTextFontSize * \real{1.3}}
+
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{1.75ex plus 0.5ex minus 0.3ex}
+\widowpenalty=10000
+\clubpenalty=10000
+
+\newlength{\largeFontSize}
+\newlength{\largishFontSize}
+\newlength{\largeFontLeading}
+\newlength{\largishFontLeading}
+\setlength{\largeFontSize}{16pt}
+\setlength{\largeFontLeading}{\largeFontSize * \real{1.15}}
+\setlength{\largishFontSize}{15pt}
+\setlength{\largishFontLeading}{\largishFontSize * \real{1.15}}
+
+\newcounter{hOneCounter}
+\newcounter{hTwoCounter}[hOneCounter]
+\renewcommand{\thehTwoCounter}{\arabic{hOneCounter}.\arabic{hTwoCounter}}
+\newcounter{hThreeCounter}[hTwoCounter]
+\renewcommand{\thehThreeCounter}{\arabic{hOneCounter}.\arabic{hTwoCounter}.\arabic{hThreeCounter}}
+
+\newcommand{\hzero}[1]{%
+  \FloatBarrier
+  \newpage
+  \phantomsection
+  \addcontentsline{toc}{section}{#1}
+  \noindent{\centering\fontsize{\largeFontSize}{\largeFontLeading}\selectfont\sffamily\uppercase{#1}
+    
+  }
+  \vspace{1ex}
+}
+
+\newcommand{\hone}[2][]{%
+  \FloatBarrier
+  \needspace{5\baselineskip}
+  \refstepcounter{hOneCounter}
+  \phantomsection
+  \addcontentsline{toc}{subsection}{\texorpdfstring
+    {\makebox[1.5em][l]{\arabic{hOneCounter}}#2}
+    {\arabic{hOneCounter}~#2}
+  }
+  \vspace{4ex}
+  \noindent{\centering\fontsize{\largeFontSize}{\largeFontLeading}\selectfont\sffamily\bfseries
+    \arabic{hOneCounter}\hspace{0.8em}#2
+    
+  }
+  \vspace{1ex}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+}
+
+\newcommand{\htwo}[2][]{%
+  \FloatBarrier
+  \needspace{5\baselineskip}
+  \refstepcounter{hTwoCounter}
+  \phantomsection
+  \addcontentsline{toc}{subsubsection}{\texorpdfstring
+    {\makebox[2em][l]{\arabic{hOneCounter}.\arabic{hTwoCounter}}#2}
+    {\arabic{hOneCounter}.\arabic{hTwoCounter}~#2}
+  }
+  \vspace{3ex}
+  {\fontsize{\largishFontSize}{\largishFontLeading}\selectfont\sffamily\bfseries
+    \arabic{hOneCounter}.\arabic{hTwoCounter}\hspace{0.8em}\fillparbox[t]{#2}
+  }
+  \vspace{0.75ex}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+}
+
+\newcommand{\hthree}[2][]{%
+  \FloatBarrier
+  \needspace{5\baselineskip}
+  \refstepcounter{hThreeCounter}
+  \phantomsection
+  \addcontentsline{toc}{paragraph}{\texorpdfstring
+    {\makebox[2.75em][l]{\arabic{hOneCounter}.\arabic{hTwoCounter}.\arabic{hThreeCounter}}#2}
+    {\arabic{hOneCounter}.\arabic{hTwoCounter}.\arabic{hThreeCounter}~#2}
+  }
+  \vspace{3ex}
+  {\sffamily\bfseries
+    \arabic{hOneCounter}.\arabic{hTwoCounter}.\arabic{hThreeCounter}\hspace{0.8em}\fillparbox[t]{#2}
+  }
+  \vspace{0.75ex}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}%
+}
+
+
+% Поля, нумерация страниц
+\usepackage[top=2cm, bottom=2cm, left=3cm, right=1cm]{geometry}
+
+\fancypagestyle{plain}{%
+  \fancyhf{} % clear all header and footer fields
+  \fancyfoot[C]{\leavevmode\BeginAccSupp{method=escape,ActualText={}}%
+    \fontsize{\mainTextFontSize}{\mainTextLeading}\selectfont\mononums{\thepage}%
+    \EndAccSupp{}%
+  } % except the center
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+\pagestyle{plain}
+
+
+% Специальные обозначения
+
+% Mono emphasize for inline use
+\makeatletter
+\newcommand*\fsize{\dimexpr\f@size pt\relax}
+\newcommand{\memph}[1]{\texttt{\fontsize{0.85\fsize}{0.85\fsize}\selectfont #1}}
+\makeatother
+
+\newcommand{\mononums}[1]{{\addfontfeatures{Numbers=Monospaced} #1}}
+
+\urlstyle{same}
+
+
+% Нумерованные и маркированные списки
+% https://en.wikibooks.org/wiki/LaTeX/List_Structures
+% http://ctan.altspu.ru/macros/latex/contrib/enumitem/enumitem.pdf
+
+% \begin{itemize or enumerate}
+% \item The first item
+% \item The second item 
+% \item The third 
+% \end{itemize or enumerate}
+
+\setlist{nosep, itemsep=0.5ex, left=0.5\parindent .. \parindent}
+
+
+% Титульный лист (Тип работы, название работы, преподаватель, авторы)
+
+% Тип работы
+\newcommand{\letiTitleName}{Отчёт о лабораторной работе}
+
+% Дисциплина
+\newcommand{\letiTitleSubject}{Информатика}
+
+% Тема
+\newcommand{\letiTitleTopic}{Вомбаты}
+
+% Авторы (группа, имена)
+\newcommand{\letiTitleGroupNum}{0321}
+
+\newcommand{\letiTitleAuthorOne}{М. Климанов}
+\newcommand{\letiTitleAuthorTwo}{}
+\newcommand{\letiTitleAuthorThree}{}
+\newcommand{\letiTitleAuthorFour}{}
+
+
+% Проверяющий (звание, имя)
+\newcommand{\letiTitleProfTitle}{к.т.н.}
+\newcommand{\letiTitleProfName}{тов. Миронов}
+
+
+\renewcommand{\maketitle}{%
+  \thispagestyle{empty}
+  \newgeometry{left=3cm, right=3cm, top=2cm, bottom=2cm}
+  {\centering
+    \begin{minipage}{15cm}
+      {\centering\fontsize{12pt}{12pt}\selectfont
+        МИНОБРНАУКИ РОССИИ
+
+        Федеральное государственное бюджетное образовательное учреждение
+        
+        высшего профессионального образования
+
+        <<Санкт-Петербургский государственный электротехнический
+        университет
+
+        ,,ЛЭТИ`` им. В.И. Ульянова (Ленина)>>
+
+        (СПбГЭТУ)
+        
+      }\vspace{0.5cm}\hrule
+    \end{minipage}
+    
+  }
+  \vfill
+  {\centering
+    \begin{minipage}{\textwidth}
+      {\centering\fontsize{16pt}{16pt}\selectfont
+        \setlength{\parskip}{1ex}
+        \uppercase{Факультет компьютерных технологий и информатики}
+        \vspace{0.7cm}
+        
+        {\bfseries Кафедра вычислительной техники}
+        \vspace{0.7cm}
+        
+        {\bfseries \letiTitleName}
+        \vspace{0.7cm}
+        
+        по дисциплине
+        
+        <<\letiTitleSubject>>
+        \vspace{0.7cm}
+        
+        на тему
+        
+        {\bfseries <<\letiTitleTopic>>}
+        
+      }
+    \end{minipage}
+    
+  }
+  \vfill
+  {\centering
+    \begin{minipage}{\textwidth}
+      {\fontsize{14pt}{14pt}\selectfont
+        \setlength{\parskip}{2ex}
+        {\bfseries \ifthenelse{\equal{\letiTitleAuthorTwo}{}}{Выполнил:}{Выполнили:}}
+        
+        \parbox[t]{0.35\textwidth}{%
+          \ifthenelse{\equal{\letiTitleAuthorTwo}{}}{студент}{студенты}
+          группы \letiTitleGroupNum
+        }
+        \hfill
+        \begin{minipage}[t]{0.55\textwidth}
+          {\setlength{\parskip}{1ex}
+            \ifthenelse{\equal{\letiTitleAuthorOne}{}}{}{%
+              \rule{0.35\textwidth}{0.4pt}
+              \hfill
+              \parbox[c]{0.6\textwidth}{\raggedleft
+                (\letiTitleAuthorOne)
+                \vspace{0.2cm}
+              }
+            }\par
+            \ifthenelse{\equal{\letiTitleAuthorTwo}{}}{}{%
+              \rule{0.35\textwidth}{0.4pt}
+              \hfill
+              \parbox[c]{0.6\textwidth}{\raggedleft
+                (\letiTitleAuthorTwo)
+                \vspace{0.2cm}
+              }
+            }\par
+            \ifthenelse{\equal{\letiTitleAuthorThree}{}}{}{%
+              \rule{0.35\textwidth}{0.4pt}
+              \hfill
+              \parbox[c]{0.6\textwidth}{\raggedleft
+                (\letiTitleAuthorThree)
+                \vspace{0.2cm}
+              }
+            }\par
+            \ifthenelse{\equal{\letiTitleAuthorFour}{}}{}{%
+              \rule{0.35\textwidth}{0.4pt}
+              \hfill
+              \parbox[c]{0.6\textwidth}{\raggedleft
+                (\letiTitleAuthorFour)
+                \vspace{0.2cm}
+              }
+            }\par
+          }
+        \end{minipage}
+      }
+    \end{minipage}
+    \vfill
+    \begin{minipage}{\textwidth}
+      {\fontsize{14pt}{14pt}\selectfont
+        \setlength{\parskip}{2ex}
+        {\bfseries Проверил:}
+
+        \parbox[c]{0.35\textwidth}{%
+          \letiTitleProfTitle
+        }
+        \hfill
+        \begin{minipage}[c]{0.55\textwidth}
+          {\setlength{\parskip}{1ex}
+            \rule{0.35\textwidth}{0.4pt}
+            \hfill
+            \parbox[c]{0.6\textwidth}{\raggedleft
+              (\letiTitleProfName)
+            }\par
+          }
+        \end{minipage}
+      }
+    \end{minipage}
+    
+  }
+  \vfill
+  {\centering\fontsize{14pt}{14pt}\selectfont
+    Санкт-Петербург, \oldstylenums{\the\year{}}
+    
+  }
+  \restoregeometry
+  \newpage
+}
+
+
+
+% Содержание
+\setcounter{tocdepth}{4}
+
+
+% Рисунки с нумерацией и cross-references
+
+% See figure \ref{fig:test}
+% \letiFigure[fig:test]{width=\textwidth}{Вомбат}{img/2.png}
+
+\newcounter{figureCounter}
+\renewcommand{\thefigureCounter}{\arabic{figureCounter}}
+
+
+% 1 (opt) -- label name
+% 2 -- Размеры изображения
+% 3 -- Название изображения
+% 4 -- Файл изображения
+\newcommand{\letiFigure}[4][]{%
+  \begin{figure}
+    \refstepcounter{figureCounter}
+    \ifthenelse{\equal{#1}{}}{}{\label{#1}}
+    {\centering
+      \includegraphics[#2]{#4}
+
+      \vspace{1ex}
+      {\fontsize{12pt}{12pt}\selectfont\itshape
+        Рисунок \thefigureCounter\ --- #3
+      }
+      
+    }
+  \end{figure}
+}
+
+
+% Формулы с нумерацией и cross-references
+% https://en.wikibooks.org/wiki/LaTeX/Mathematics
+% https://en.wikibooks.org/wiki/LaTeX/Advanced_Mathematics
+
+
+% Таблицы с нумерацией и cross-references
+% https://en.wikibooks.org/wiki/LaTeX/Tables
+% https://texblog.org/2019/06/03/control-the-width-of-table-columns-tabular-in-latex/
+
+\newcounter{tableCounter}
+\renewcommand{\thetableCounter}{\arabic{tableCounter}}
+\newcommand{\letiTableCaption}[1]{\fontsize{12pt}{12pt}\selectfont\itshape
+  Таблица \thetableCounter\ --- #1
+}
+
+\usepackage[tableposition=below]{caption}
+\captionsetup[longtable]{skip=0em,font=large}
+\captionsetup[table]{skip=0em,font=large}
+
+% \setlength{\tabcolsep}{10pt} % Horizontal spacing between columns. Default value: 6pt
+% \renewcommand{\arraystretch}{1.5} % Spacing between rows. Default value: 1
+
+% \begin{longtable}{ | m{0.2\textwidth} | c | c | }
+%   \caption*{\textit{Таблица 1 --- Демонстрация}} \\
+%   % \multicolumn{3}{l}{\parbox{9cm}{\textit{Таблица 1 --- Демонстрация}}} \\
+%   \hline
+%   \textbf{First entry} & \textbf{Second entry} & \textbf{Third entry} \\
+%   \hline
+%   \endfirsthead
+%   % \multicolumn{3}{c}{\textit{Продолжение таблицы 1}} \\
+%   \caption*{\textit{Продолжение таблицы 1}} \\
+%   \hline\hline
+%   \textbf{First entry} & \textbf{Second entry} & \textbf{Third entry} \\
+%   \hline
+%   \endhead
+%   \hline\hline
+%   % \multicolumn{3}{c}{\textit{Таблица 1 продолжена на следующей странице}} \\
+%   \caption*{\textit{Таблица 1 продолжена на следующей странице}} \\
+%   \endfoot
+%   \endlastfoot
+  
+%   \hline
+%   cell1 dummy text dummy  text dummy text& cell2 & cell3 \\ 
+%   \hline
+%   cell1 dummy text dummy text dummy text & cell5 & cell6 \\ 
+%   \hline
+%   cell7 & cell8 & cell9 \\
+%   \hline
+%   cell1 dummy text dummy  text dummy text& cell2 & cell3 \\ 
+%   \hline
+%   cell1 dummy text dummy text dummy text & cell5 & cell6 \\ 
+%   \hline
+%   cell7 & cell8 & cell9 \\
+%   \hline
+%   cell1 dummy text dummy  text dummy text& cell2 & cell3 \\ 
+%   \hline
+%   cell1 dummy text dummy text dummy text & cell5 & cell6 \\ 
+%   \hline
+%   cell7 & cell8 & cell9 \\
+%   \hline
+    %   \end{longtable}
+
+% \begin{letiLongTable}[tab:dummy1]
+%   {Демонстрация таблицы, которая автоматически разбивается на несколько страниц}
+%   {| m{0.4\textwidth} c c |}
+%   {\textbf{First entry} & \textbf{Second entry} & \textbf{Third entry} \\}
+  
+%   \hline
+%   cell1 dummy text dummy  text dummy text& cell2 & cell3 \\ 
+%   \hline
+%   cell1 dummy text dummy text dummy text & cell5 & cell6 \\ 
+%   \hline
+% \end{letiLongTable}
+
+
+% 1 (opt) -- label
+% 2 -- название таблицы
+% 3 -- table spec
+% 4 -- строка заголовока таблицы
+\newenvironment{letiLongTable}[4][]{%
+  \refstepcounter{tableCounter}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}
+  \begin{longtable}{#3}
+    \caption*{\textit{Таблица \thetableCounter\ --- #2}} \\
+    \hline
+    #4
+    \endfirsthead
+    \caption*{\textit{Продолжение таблицы \thetableCounter}} \\
+    \hline\hline
+    #4
+    \endhead
+    \hline\hline
+    \caption*{\textit{Таблица \thetableCounter\ продолжена на следующей странице}} \\
+    \endfoot
+    \endlastfoot}
+    {
+  \end{longtable}
+}
+
+% 1 (opt) -- label
+% 2 -- название таблицы
+% 3 -- table spec
+\newenvironment{letiTable}[3][]{%
+  \refstepcounter{tableCounter}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}
+  \begin{table}
+    \caption*{\textit{Таблица \thetableCounter\ --- #2}}
+    \centering\begin{tabular}{#3}
+    }
+    {
+  \end{tabular}\end{table}
+}
+
+
+% Листинги с нумерацией и cross-references
+\usemintedstyle{trac}
+\renewcommand{\theFancyVerbLine}{%
+  \BeginAccSupp{method=escape,ActualText={}}%
+  \textcolor[rgb]{0.5,0.5,0.5}%
+  {\arabic{FancyVerbLine}}%
+  \EndAccSupp{}%
+}
+
+\newcounter{listingCounter}
+\renewcommand{\thelistingCounter}{\arabic{listingCounter}}
+
+% 1 (opt) -- label name
+% 2 -- Название листинга
+% 3 -- Язык программирования
+\newenvironment{letiListing}[3][]
+{%
+  \vspace{2ex}
+  \noindent
+  \refstepcounter{listingCounter}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}
+    {\raggedleft\fontsize{12pt}{12pt}\selectfont\itshape
+      Листинг \thelistingCounter\ --- #2\par
+    }
+  \vspace{-0.2cm}
+  \fontsize{10pt}{10pt}\selectfont\VerbatimEnvironment
+  \begin{minted}[mathescape,
+    linenos,
+    autogobble,
+    xleftmargin=1cm,
+    breaklines,
+    frame=single,
+    framesep=2mm]{#3}}
+  {\end{minted}\vspace{2ex}}
+
+% 1 (opt) -- label name
+% 2 -- Название листинга
+% 3 -- Язык программирования
+% 4 -- file
+\newcommand{\letiListingInput}[4][]
+{%
+  \needspace{5\baselineskip}
+  \vspace{2ex}
+  \noindent
+  \refstepcounter{listingCounter}
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}
+    {\raggedleft\fontsize{12pt}{12pt}\selectfont\itshape
+      Листинг \thelistingCounter\ --- #2\par
+    }
+    \vspace{-0.2cm}
+  \fontsize{10pt}{10pt}\selectfont
+  \inputminted[mathescape,
+    linenos,
+    autogobble,
+    xleftmargin=1cm,
+    breaklines,
+    frame=single,
+    framesep=2mm]{#3}{#4}
+}
+
+
+% Возможность добавлять горизонтальные страницы
+% https://tex.stackexchange.com/questions/278113/single-landscape-page-with-page-number-at-the-bottom
+% \begin{landscape}
+%   ...
+% \end{landscape}
+
+
+% Возможность добавлять приложения и cross-references
+\newcounter{appendixCounter}
+\renewcommand{\theappendixCounter}{\Asbuk{appendixCounter}}
+
+\newcommand{\hAppendix}[2][]{%
+  \FloatBarrier
+  \newpage
+  \refstepcounter{appendixCounter}
+  \phantomsection
+  \addcontentsline{toc}{section}{Приложение \theappendixCounter: #2}
+  \hspace{0pt}
+  \vfill
+
+  \noindent{\centering\fontsize{\largeFontSize}{\largeFontLeading}\selectfont
+    \sffamily\uppercase{Приложение \theappendixCounter}
+
+    \bfseries #2
+    
+  }
+  \ifthenelse{\equal{#1}{}}{}{\label{#1}}
+  \vfill
+  \hspace{0pt}
+  \newpage
+  \setcounter{tableCounter}{0}
+  \renewcommand{\thetableCounter}{\theappendixCounter.\arabic{tableCounter}}
+  \setcounter{figureCounter}{0}
+  \renewcommand{\thefigureCounter}{\theappendixCounter.\arabic{figureCounter}}
+  \setcounter{listingCounter}{0}
+  \renewcommand{\thelistingCounter}{\theappendixCounter.\arabic{listingCounter}}
+}
+
+
+% Возможность добавлять сноски
+% \footnote{I am a footnote}
+\renewcommand{\footnotesize}{\fontsize{10pt}{10pt}\selectfont}
+
+
+% Библиография
+% https://en.wikibooks.org/wiki/LaTeX/Bibliography_Management
+
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+% See \cite[с. 200--220]{lamport94}
+
+% \begin{thebibliography}{9}
+% \bibitem{lamport94}
+%   Leslie Lamport,
+%   \textit{\LaTeX: a document preparation system},
+%   Addison Wesley, Massachusetts,
+%   2nd edition,
+%   1994.
+% \end{thebibliography}
+
+
+% Commands that must be executed in document block
+\newcommand{\letiPreamble}{
+  \fontsize{\mainTextFontSize}{\mainTextLeading}\selectfont
+  \renewcommand{\contentsname}{\noindent\centering
+    \textnormal{\fontsize{16pt}{16pt}\selectfont\sffamily\uppercase{Содержание}}}
+}
+
+
+% #######################################################################
+% #######################################################################
+% #######################################################################
+
+
+% Тип работы
+\renewcommand{\letiTitleName}{Отчёт о лабораторной работе №\,2}
+
+% Дисциплина
+\renewcommand{\letiTitleSubject}{Программирование}
+
+% Тема
+\renewcommand{\letiTitleTopic}{Вычисление суммы ряда}
+
+% Авторы (группа, имена)
+\renewcommand{\letiTitleGroupNum}{0321}
+
+\renewcommand{\letiTitleAuthorOne}{Климанов\,М.}
+\renewcommand{\letiTitleAuthorTwo}{Русских\,В.}
+\renewcommand{\letiTitleAuthorThree}{Феллер\,В.}
+\renewcommand{\letiTitleAuthorFour}{}
+
+
+% Проверяющий (звание, имя)
+\renewcommand{\letiTitleProfTitle}{Преподаватель каф. ВТ, к.т.н., доцент}
+\renewcommand{\letiTitleProfName}{Миронов\,С.Э.}
+
+
+% Метаданные PDF
+\hypersetup{%
+  pdfauthor={Климанов М., 0321},
+  pdftitle={\letiTitleTopic},
+  pdfsubject={\letiTitleName},
+  pdfkeywords={ЛЭТИ},
+  pdfproducer={XeLaTeX, hyperref},
+  pdfcreator={LaTeX}
+}
+
+
+% In case of overfull boxes
+% \setlength{\emergencystretch}{4em}
+% \tolerance=1000
+
+\usepackage{dcolumn}
+\newcolumntype{d}[1]{D{,}{,}{#1} }
+
+
+\renewcommand{\epsilon}{\varepsilon}
+\begin{document}
+\maketitle
+\letiPreamble
+\mononums{\tableofcontents}
+\newpage
+
+\hone{Цель работы}
+
+Целью этой лабораторной работы является изучение математических и
+циклических операторов языка \memph{C} и получение практических
+навыков создания программ для эффективного вычисления суммы ряда.
+
+
+\hone{Задание}
+
+Дан функциональный числовой ряд
+\begin{equation}\label{eq:theSeries}
+  S(x) = \sum_{m = 1}^\infty (-1)^{m + 1} \cdot \frac{2^{m - 1}}{x^m} =
+  \frac{1}{x} - \frac{2}{x^2} + \frac{4}{x^3} - \frac{8}{x^4} + \ldots
+\end{equation}
+
+Необходимо определить его область сходимости и написать программу на
+языке \memph{C}, которая эффективно вычисляет его сумму в заданной
+точке с заданной допустимой погрешностью $\pm\epsilon$. Иными словами
+нужно вычислить такую частичную сумму
+$S_n(x) = \sum_{m = 1}^{n} (-1)^{m + 1} \cdot \frac{2^{m -
+    1}}{x^m}$, что
+\begin{equation}
+  |S(x) - S_n(x)| < \epsilon
+\end{equation}
+
+
+\newpage\hone{Ход работы}
+
+В ходе выполнения лабораторной работы сначала была написана наивная
+реализация алгоритма вычисления суммы ряда \eqref{eq:theSeries}. После
+этого последовательно были найдены две возможности вычислить сумму
+этого ряда более эффективно. Исходный код всех трёх реализаций
+приведён в приложении \ref{app:code}.
+
+
+\htwo{Сходимость ряда}
+
+Область сходимости ряда \eqref{eq:theSeries} можно найти с помощью
+радикального признака сходимости Коши \cite[с. 298]{fichtenholz}:
+\begin{equation}
+  \lim_{n \to \infty} \sqrt[n]{\frac{2^{n-1}}{|x^n|}} =
+  \lim_{n \to \infty} \frac{2}{\sqrt[n]{2} \cdot |x|} = \frac{2}{|x|} < 1
+  \implies x \in (-\infty ; -2) \cup (2 ; +\infty)
+\end{equation}
+
+Таким образом, ряд \eqref{eq:theSeries} сходится абсолютно на области
+$(-\infty ; -2) \cup (2 ; +\infty)$. Когда программе на вход подаётся
+значение $x$, не входящее в эту область, она должна завершаться и
+сообщать об ошибке.
+
+
+\htwo{Наивный подход}
+
+Известно, что остаток знакочередующегося ряда не превышает по модулю
+первого отброшенного слагаемого \cite[с. 330]{fichtenholz}. Этот факт
+позволяет использовать следующий критерий остановки алгоритма:
+\emph{алгоритм должен прекратить суммирование, когда последнее
+  вычисленное слагаемое по модулю меньше $\epsilon$.}
+
+Наивная реализация приведена в листинге \ref{lst:naive}. Из этого
+листинга видно, что на каждой итерации рабочего цикла программы
+используется 1 операция деления, 2 операции умножения, 1 операция
+сложения, операция сравнения, условный оператор и вызов функции
+\memph{fabs()}. В следующей версии программы количество операций в
+цикле значительно сократится.
+
+
+\htwo{Схема Горнера}
+
+Чтобы исключить операцию сравнения и условный оператор на каждой
+итерации цикла, можно заранее вычислить такое $n$, что
+$|S(x) - S_n(x)| < \epsilon$. Тогда количество итераций рабочего цикла
+будет известно на момент его начала и лишние сравнения не понадобятся.
+
+Сначала нужно найти такое $n$, что $|a_{n+1}| < \epsilon$,
+преобразовав это неравенство:
+\begin{equation}\label{eq:horNDef}
+  |a_{n + 1}| = \left|\frac{2^n}{x^{n+1}}\right| = \frac{2^n}{|x|^{n+1}} < \epsilon
+  \implies n \ge \frac{\ln{2\epsilon}}{\ln{\frac{2}{|x|}}}
+\end{equation}
+Теперь, если $|S(x) - S_n(x)| < |a_{n+1}|$ согласно оценке остатка
+знакочередующегося ряда, и $|a_{n+1}| < \epsilon$, то
+$|S(x) - S_n(x)| < \epsilon$ при любом найденном в \eqref{eq:horNDef}
+$n$, что и требовалось получить.
+
+Если $x < -2$, то
+$S(x) = -\frac{1}{|x|} - \frac{2}{|x|^2} - \frac{4}{|x|^3} - \ldots$
+То есть, ряд \eqref{eq:theSeries} перестаёт быть
+знакочередующимся. Это значит, что оценка $n$ в \eqref{eq:horNDef} в
+таком случае некорректна и необходимо вычислять $n$ по-другому.
+
+Чтобы получить оценку $n$ для случая $x < -2$, можно вычислить остаток
+ряда
+\begin{equation}\label{eq:majoringSeries}
+  R(x) = \sum_{m = 1}^{\infty} \left( \frac{2}{|x|} \right)^m
+\end{equation}
+Остаток ряда \eqref{eq:majoringSeries} будет больше остатка ряда
+\eqref{eq:theSeries} при $x < -2$, т.к.
+$\left( \frac{2}{|x|} \right)^m > \frac{2^{m-1}}{|x|^m}$ для всех m.
+Остаток ряда \eqref{eq:majoringSeries} можно вычислить точно как остаток геометрического ряда:
+\begin{equation}
+  R(x) - R_n(x) = \frac{\frac{2}{|x|} \left( 1 - \left(\frac{2}{|x|}\right)^n \right) }{1 - \frac{2}{|x|}} - \frac{\frac{2}{|x|}}{1 - \frac{2}{|x|}} = \frac{2^{n+1}}{|x|^n (|x| - 2)}
+\end{equation}
+Новую оценку $n$ можно получить аналогично \eqref{eq:horNDef},
+преобразовав неравенство:
+\begin{equation}
+  \frac{2^{n+1}}{|x|^n (|x| - 2)} < \epsilon \implies n > \frac{\ln{\frac{\epsilon}{2}} + \ln(|x| - 2)}{\ln{\frac{2}{|x|}}}
+\end{equation}
+
+$S_n(x)$ можно вычислять ещё более эффективно, преобразовав его по
+схеме Горнера \cite[с. 538]{knuth2} следующим образом:
+\begin{align}
+  &S_n(x) = \frac{(-1)^2}{2} \cdot \frac{2}{x} + \frac{(-1)^3}{2} \cdot \left(\frac{2}{x}\right)^2 + \ldots + \frac{(-1)^{n+1}}{2} \cdot \left(\frac{2}{x}\right)^{n} = \nonumber\\
+  &= \left(\rule{0cm}{32pt}\left(\rule{0cm}{24pt} \ldots \left( \frac{2}{x} \cdot \frac{(-1)^{n+1}}{2} + \frac{(-1)^n}{2} \right) \frac{2}{x} + \ldots + \frac{(-1)^3}{2} \right) \frac{2}{x} + \frac{(-1)^2}{2} \right) \frac{2}{x}
+\end{align}
+
+Реализация вычисления суммы ряда с разложением по схеме Горнера приведена в
+листинге \ref{lst:horner}. Здесь на каждой итерации рабочего цикла
+используется только 1 умножение и 2 сложения.
+
+
+\htwo{Нахождение функции, в которую раскладывается ряд}
+
+Поскольку ряд \eqref{eq:theSeries} сходится абсолютно, его слагаемые
+можно произвольно переставлять, и сумма ряда при этом не
+изменится. Его можно представить как разность двух геометрических
+рядов и получить очень простую элементарную функцию, в которую
+раскладывается ряд:
+\begin{align}
+  S(x) &= \sum_{m = 1}^{\infty} (-1)^{m+1} \cdot \frac{2^{m-1}}{x^m}
+         = \frac{1}{2} \left( \sum_{m = 1}^{\infty} \left( \frac{2}{x} \right)^{2m-1} - \sum_{m = 1}^{\infty} \left( \frac{2}{x} \right)^{2m} \right) \nonumber\\
+         &= \frac{1}{x + 2}
+\end{align}
+
+Реализация вычисления суммы ряда с использованием функции
+$\frac{1}{x+2}$ приведена в листинге \ref{lst:constant-time}. Здесь
+сумма ряда вычисляется с точностью, которую могут дать числа с
+плавающей точкой двойной точности (обычно около 15 десятичных цифр
+после запятой).
+
+
+\hone{Тестирование программ}
+
+В этом разделе будет проведена проверка корректности работы созданных
+программ путём запуска тест-кейсов для каждого варианта реализации. В
+начале будет протестирована самая точная реализация, которая будет
+использована как эталон для обнаружения недостатков в других
+реализациях.
+
+
+\htwo{Тестирование абсолютно точной реализации}
+
+В таблице \ref{tab:precise} приведены входные значения $x$ и
+соответствующие им выходные значения $S(x)$, произведённые программой
+из листинга \ref{lst:constant-time}.
+
+\setlength{\tabcolsep}{10pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{letiTable}[tab:precise]{Результаты тестов программы \ref{lst:constant-time}}{d{3} d{6}}
+  \toprule
+  \multicolumn{1}{c}{$x$} & \multicolumn{1}{c}{$S(x)$} \\
+  \midrule
+  -10 & -0,125 \\
+  -3 & -1 \\
+  -2,001 & -1000 \\
+  2,01 & 0,249377 \\
+  4 & 0,166667 \\
+  8 & 0,1 \\
+  \bottomrule
+\end{letiTable}
+
+
+\htwo{Тестирование наивной реализации}
+
+В таблице \ref{tab:naive} приведены входные значения $x$ и $\epsilon$,
+а также соответствующие им выходные значения $n$ и $S_n(x)$,
+произведённые программой из листинга \ref{lst:naive}. С целью оценки
+погрешности в ней также приведены остатки частичной суммы ряда. Серым
+цветом в этой таблице выделены тест-кейсы, в которых остаток превысил
+заданное значение $\epsilon$.
+
+Как уже было замечено, оценка остатка с помощью последнего
+отброшенного члена ряда некорректна для отрицательных $x$. Именно
+поэтому в строке 3 реальный остаток суммы ряда превысил заданный
+$\epsilon$.
+
+Чем ближе $x$ к точкам $-2$ и $2$ при фиксированном $\epsilon$, тем
+медленнее убывают слагаемые в ряде и тем больше членов ряда необходимо
+вычислить, чтобы получить суму ряда с заданной точностью. Например, в
+строке 4 $n = 1024$. Это значит, что программе необходимо вычислить
+1024-й член ряда: $\frac{2^{1023}}{x^{1024}}$. При этом максимально
+допустимое значение показателя в числах с плавающей точкой двойной
+точности равно 1023. Как следствие, происходит переполнение числа с
+плавающей точкой и расчёты завершаются значительно раньше, чем
+требуется для достижения нужной точности.
+
+
+\begin{letiTable}[tab:naive]{Результаты тестов программы \ref{lst:naive}}{d{3} d{5} d{0} d{6} d{6}}
+  \toprule
+  \multicolumn{1}{c}{$x$} & \multicolumn{1}{c}{$\epsilon$} &
+  \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$S_n(x)$} &
+  \multicolumn{1}{c}{$|S(x) - S_n(x)|$} \\
+  \midrule
+  -10 & 0,1 & 2 & -0,12 & 0,005 \\
+  -10 & 0,01 & 3 & -0,124 & 0,001 \\
+  \rowcolor[gray]{0.9} -3 & 0,0001 & 22 & -0,999866 & 0,000134 \\
+  \rowcolor[gray]{0.9} -2,001 & 0,001 & 1024 & -400,327837 & 599,672163 \\
+  2,01 & 0,01 & 785 & 0,254348 & 0,004971 \\ 
+  4 & 0,0001 & 13 & 0,166687 & 0,00002 \\
+  8 & 0,00001 & 8 & 0,099998 & 0,000002 \\
+  \bottomrule
+\end{letiTable}
+
+
+\htwo{Тестирование реализации по схеме Горнера}
+
+В таблице \ref{tab:horner} приведены тест-кейсы для программы
+\ref{lst:horner}. Из сравнения таблиц \ref{tab:naive} и
+\ref{tab:horner} видно, что недостатки, характерные для наивной
+реализации, исправлены в реализации по схеме Горнера.
+
+\begin{letiTable}[tab:horner]{Результаты тестов программы \ref{lst:horner}}{d{3} d{5} d{0} d{6} d{6}}
+  \toprule
+  \multicolumn{1}{c}{$x$} & \multicolumn{1}{c}{$\epsilon$} &
+  \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$S_n(x)$} &
+  \multicolumn{1}{c}{$|S(x) - S_n(x)|$} \\
+  \midrule
+  -10 & 0,1 & 1 & -0,1 & 0,025 \\
+  -10 & 0,01 & 3 & -0,124 & 0,001 \\
+  -3 & 0,0001 & 25 & -0,999960 & 0,00004 \\
+  -2,001 & 0,001 & 29025 & -999,999500 & 0,0005 \\
+  2,01 & 0,01 & 785 & 0,254348 & 0,004971 \\ 
+  4 & 0,0001 & 13 & 0,166687 & 0,00002 \\
+  8 & 0,00001 & 8 & 0,099998 & 0,000002 \\
+  \bottomrule
+\end{letiTable}
+
+
+\newpage\hone{Выводы}
+
+В ходе лабораторной работы изучены математические и циклические
+операторов языка \memph{C}, написаны три программы, вычисляющие один и
+тот же ряд с разной степенью эффективности. Изучены способы
+оптимизации вычисления многочленов (схемы Горнера и
+Эстрина). Использованные техники оптимизации вычислений можно
+использовать для более широкого класса задач (вычисление других рядов,
+сумм, многочленов).
+
+
+\hzero{Список использованных источников}
+
+\begin{thebibliography}{9}
+\bibitem{fichtenholz} Фихтенгольц\,Г.М. Курс дифференциального и
+  интегрального исчисления. В 3 т. Т. II / Пред. и
+  прим. А.А. Флоринского. : 8-е изд. --- М. : ФИЗМАТЛИТ, 2003. ISBN
+  5-9221-0157-9.
+
+\bibitem{knuth2} Кнут, Дональд Эрвин. Искусство программирования,
+  т.\,2. Получисленные алгоритмы, 3-е изд. : Пер. с англ. --- М. : ООО
+  <<И.Д. Вильямс>>, 2017. ISBN 978-5-8459-0081-4 (рус.).
+  
+\end{thebibliography}
+
+
+\hAppendix[app:code]{Исходный код программ}
+
+\begin{letiListing}[lst:naive]{Наивное вычисление суммы ряда}{c}
+#include <stdio.h>
+#include <math.h>
+
+
+int main() {
+    int MAX_SERIES_N = 10000; // Максимальный номер члена ряда.
+    int i;
+    double eps;               // epsilon -- такое число, что остаток ряда не должен его превысить.
+    double x, initial_x, series_sum = 0, series_term, numerator = 1;
+
+    printf("S = (1 / x) - (2 / x^2) + (4 / x^3) - (8 / x^4) + ...\n");
+    printf("x = ");
+    scanf("%lf", &x);
+
+    if (x >= -2.0 && x <= 2.0) {
+        // Ряд расходится, программа завершается.
+        printf("\nРяд расходится в заданной точке x.\n");
+        return 0;
+    }
+    initial_x = x;
+    
+    printf("epsilon = ");
+    scanf("%lf", &eps);
+
+    if (eps <= 0) {
+        // Некорректный epsion
+        printf("\nEpsilon -- это требуемый остаток ряда. Он должен быть положительным.\n");
+        return 0;
+    }
+    
+    printf("\n...Вычисления...\n");
+
+    for (i = 1; i <= MAX_SERIES_N; ++i) {
+        series_term = numerator / x;
+        series_sum += series_term;
+        numerator *= -2;                   // Минус обеспечивает чередование знаков.
+        x *= initial_x;
+
+        if (fabs(series_term) < eps) {
+            printf("Член ряда меньше epsilon. Остановка вычислений...\n");
+            ++i;
+            break;
+        }
+    }
+
+    printf("Номер последнего вычисленного элемента ряда: %d\n", i - 1);
+    printf("Частичная сумма ряда S_%d = %lf\n", i - 1, series_sum);
+
+    return 0;
+}
+\end{letiListing}  
+
+\newpage\begin{letiListing}[lst:horner]{Вычисление суммы ряда по схеме Горнера}{c}
+#include <stdio.h>
+#include <math.h>
+
+
+int main() {
+    int MAX_SERIES_N = 1000000; // Максимальный номер члена ряда.
+    int i, n;
+    double eps;                 // epsilon -- такое число, что остаток ряда не должен его превысить.
+    double x, a, b;
+
+    printf("S = (1 / x) - (2 / x^2) + (4 / x^3) - (8 / x^4) + ...\n");
+    printf("x = ");
+    scanf("%lf", &x);
+
+    if (x >= -2.0 && x <= 2.0) {
+        // Ряд расходится, программа завершается.
+        printf("\nРяд расходится в заданной точке x.\n");
+        return 0;
+    }
+    
+    printf("epsilon = ");
+    scanf("%lf", &eps);
+
+    if (eps <= 0) {
+        // Некорректный epsion
+        printf("\nEpsilon -- это требуемый остаток ряда. Он должен быть положительным.\n");
+        return 0;
+    }
+    
+    printf("\n...Вычисления...\n");
+
+    if (x > 2) {
+        n = (int) (log(2.0 * eps) / log(2.0 / fabs(x))) + 1;
+    }
+    else {
+        // При отрицательных x ряд больше не знакочередующийся, а
+        // значит и оценка остатка совсем другая.
+        n = (int) ((log(eps / 2.0) + log(fabs(x) - 2.0)) / log(2.0 / fabs(x))) + 1;
+    }
+    
+    n = (n > 0) ? n : 1;
+    n = (n > MAX_SERIES_N) ? MAX_SERIES_N : n;
+    x = 2 / x;
+    printf("Для обеспечения требуемой точности нужно n = %d членов ряда.\n", n);
+    
+    a = (n % 2 == 1) ? 0.5 : -0.5;
+    b = a;
+    for (i = 0; i < n - 1; ++i) {
+        a = -a;
+        b = a + b * x;
+    }
+    b = b * x;
+    
+    printf("Частичная сумма ряда S_%d = %lf\n", n, b);
+
+    return 0;
+}
+\end{letiListing}
+
+\newpage\begin{letiListing}[lst:constant-time]{Вычисление суммы ряда в замкнутой форме}{c}
+#include <stdio.h>
+
+
+int main() {
+    double x;
+
+    printf("S = (1 / x) - (2 / x^2) + (4 / x^3) - (8 / x^4) + ...\n");
+    printf("x = ");
+    scanf("%lf", &x);
+
+    if (x >= -2.0 && x <= 2.0) {
+        // Ряд расходится, программа завершается.
+        printf("\nРяд расходится в заданной точке x.\n");
+    }
+    else {
+        printf("Сумма ряда S = %lf\n", 1 / (x + 2));
+    }
+
+    return 0;
+}
+\end{letiListing}
+
+\end{document}
